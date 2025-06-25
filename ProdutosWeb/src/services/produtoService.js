@@ -15,14 +15,19 @@ const obter = async (id) => {
 };
 
 const criar = async (produto) => {
-  const { data } = await axios.post(API_URL, produto);
+  const { data } = await axios.post(API_URL, produto, {
+    headers: { 'Content-Type': 'application/json' }
+  });
   return data;
 };
 
 const atualizar = async (id, produto) => {
-  const { data } = await axios.put(`${API_URL}/${id}`, produto);
+  const { data } = await axios.put(`${API_URL}/${id}`, produto, {
+    headers: { 'Content-Type': 'application/json' }
+  });
   return data;
 };
+
 
 const excluir = async (id) => {
   await axios.delete(`${API_URL}/${id}`);
