@@ -5,6 +5,6 @@ import react from '@vitejs/plugin-react'
 const isGithubPages = process.env.DEPLOY_TARGET === 'GH_PAGES'
 
 export default defineConfig({
-  base: isGithubPages ? '/AV2ProgramacaoWeb/',
+  base: isGithubPages ? '/AV2ProgramacaoWeb/':'/',
   plugins: [react()],
 })
