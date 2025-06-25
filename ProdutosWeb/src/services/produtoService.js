@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://cors-anywhere.herokuapp.com/http://leoproti.com.br:8004/produtos";
+const API_URL = "http://cors-anywhere.herokuapp.com/http://leoproti.com.br:8004/produtos";
 
 
 const listar = async () => {
