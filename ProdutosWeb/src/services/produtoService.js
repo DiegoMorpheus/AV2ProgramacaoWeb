@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://api.allorigins.win/raw?url=http://leoproti.com.br:8004/produtos";
+const API_URL = "http://leoproti.com.br:8004/produtos";
 
 
 
