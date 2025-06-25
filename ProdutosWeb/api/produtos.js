@@ -1,19 +1,33 @@
 export default async function handler(req, res) {
-  const baseUrl = 'http://leoproti.com.br:8004/produtos';
-  const path = req.url.replace('/api/produtos', '');
-  const targetUrl = baseUrl + path;
+  const path = req.url.replace("/api/produtos", "");
+  const targetUrl = `http://leoproti.com.br:8004/produtos${path}`;
 
-  const options = {
-    method: req.method,
-    headers: { ...req.headers, host: undefined },
-    body: ['GET', 'HEAD'].includes(req.method) ? null : req,
-  };
+  const headers = { ...req.headers };
+  delete headers.host; // remove cabeçalho que pode causar erro
+
+  let body = null;
+
+  if (!['GET', 'HEAD'].includes(req.method)) {
+    body = await req.text();
+  }
 
   try {
-    const response = await fetch(targetUrl, options);
-    const text = await response.text();
-    res.status(response.status).send(text);
+    const response = await fetch(targetUrl, {
+      method: req.method,
+      headers,
+      body,
+    });
+
+    const contentType = response.headers.get('content-type') || '';
+    const result = await (contentType.includes('application/json')
+      ? response.json()
+      : response.text());
+
+    res.status(response.status).send(result);
   } catch (err) {
-    res.status(500).json({ error: 'Proxy error', detalhes: err.message });
+    res.status(500).json({
+      error: "Erro no proxy",
+      detalhe: err.message,
+    });
   }
 }
