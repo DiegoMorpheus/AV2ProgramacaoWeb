@@ -8,9 +8,8 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "predeploy": "npm run build",
+    "predeploy": "cross-env DEPLOY_TARGET=GH_PAGES vite build",
     "deploy": "cross-env DEPLOY_TARGET=GH_PAGES gh-pages -d dist"
-
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
