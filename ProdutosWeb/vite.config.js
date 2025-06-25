@@ -1,8 +1,10 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// https://vite.dev/config/
+// Detecta se está em ambiente de produção no GitHub Pages
+const isGithubPages = process.env.DEPLOY_TARGET === 'GH_PAGES'
+
 export default defineConfig({
-  base: '/AV2ProgramacaoWeb/', // ex: /produtosweb/
+  base: isGithubPages ? '/AV2ProgramacaoWeb/' : '/',
   plugins: [react()],
 })
