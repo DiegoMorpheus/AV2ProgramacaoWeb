@@ -2,6 +2,7 @@ import axios from "axios";
 
 const API_URL = "/api/produtos";
 
+// Lista todos os produtos
 const listar = async () => {
   try {
     const { data } = await axios.get(API_URL);
@@ -12,6 +13,7 @@ const listar = async () => {
   }
 };
 
+// Obtém um produto por ID (para visualização ou edição)
 const obter = async (id) => {
   try {
     const { data } = await axios.get(`${API_URL}/${id}`);
@@ -22,11 +24,10 @@ const obter = async (id) => {
   }
 };
 
+// Cria um novo produto, sem enviar o campo ID
 const criar = async (produto) => {
   try {
-    // Clona o objeto sem o campo "id"
-    const { id, ...produtoSemId } = produto;
-
+    const { id, ...produtoSemId } = produto; // Remove o ID, se existir
     const { data } = await axios.post(API_URL, produtoSemId, {
       headers: { 'Content-Type': 'application/json' }
     });
@@ -38,7 +39,7 @@ const criar = async (produto) => {
   }
 };
 
-
+// Atualiza um produto existente por ID
 const atualizar = async (id, produto) => {
   try {
     const { data } = await axios.put(`${API_URL}/${id}`, produto, {
@@ -51,6 +52,7 @@ const atualizar = async (id, produto) => {
   }
 };
 
+// Exclui um produto por ID
 const excluir = async (id) => {
   try {
     await axios.delete(`${API_URL}/${id}`);
@@ -60,6 +62,7 @@ const excluir = async (id) => {
   }
 };
 
+// Exporta todas as funções para uso no app
 export default {
   listar,
   obter,
