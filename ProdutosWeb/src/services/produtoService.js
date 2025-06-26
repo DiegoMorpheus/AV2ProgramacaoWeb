@@ -24,15 +24,20 @@ const obter = async (id) => {
 
 const criar = async (produto) => {
   try {
-    const { data } = await axios.post(API_URL, produto, {
+    // Clona o objeto sem o campo "id"
+    const { id, ...produtoSemId } = produto;
+
+    const { data } = await axios.post(API_URL, produtoSemId, {
       headers: { 'Content-Type': 'application/json' }
     });
     return data;
   } catch (error) {
     console.error("Erro ao criar produto:", error);
+    console.log("Detalhes do erro:", error.response?.data);
     throw error;
   }
 };
+
 
 const atualizar = async (id, produto) => {
   try {
