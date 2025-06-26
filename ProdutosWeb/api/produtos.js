@@ -3,12 +3,12 @@ export default async function handler(req, res) {
   const targetUrl = `http://leoproti.com.br:8004/produtos${path}`;
 
   const headers = { ...req.headers };
-  delete headers.host; // remove cabeçalho que pode causar erro
+  delete headers.host;
 
   let body = null;
 
   if (!['GET', 'HEAD'].includes(req.method)) {
-    body = await req.text();
+    body = JSON.stringify(await req.json());
   }
 
   try {
