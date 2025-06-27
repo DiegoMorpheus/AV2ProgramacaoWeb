@@ -4,9 +4,9 @@ export default async function handler(req, res) {
     const url = new URL(req.url, `http://${req.headers.host}`);
 
     // Extrai o path corretamente, removendo a parte da rota local
-    const path = url.pathname.replace(/^\/api\/produtos/, "");
-    const query = url.search; // inclui "?algo=valor"
-    const targetUrl = `http://leoproti.com.br:8004/produtos${path}${query}`;
+    const path = url.pathname.replace(/^\/api\/produtos/, "").replace(/^\/+/, ""); // remove barras extras
+    const query = url.search;
+    const targetUrl = `http://leoproti.com.br:8004/produtos/${path}${query}`;
 
     console.log("Método:", req.method);
     console.log("Path:", path);
