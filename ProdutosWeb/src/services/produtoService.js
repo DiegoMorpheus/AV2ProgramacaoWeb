@@ -2,6 +2,25 @@ import axios from "axios";
 
 const API_URL = "/api/produtos";
 
+// Remove o campo "id" e campos nulos ou inválidos
+const limparProduto = (produto) => {
+  const { id, ...restante } = produto;
+  const limpo = {};
+
+  for (const chave in restante) {
+    const valor = restante[chave];
+    if (
+      valor !== undefined &&
+      valor !== null &&
+      (typeof valor === "string" ? valor.trim() !== "" : true)
+    ) {
+      limpo[chave] = valor;
+    }
+  }
+
+  return limpo;
+};
+
 // Lista todos os produtos
 const listar = async () => {
   try {
@@ -24,30 +43,44 @@ const obter = async (id) => {
   }
 };
 
-// Cria um novo produto (sem enviar o ID)
+// Cria um novo produto
 const criar = async (produto) => {
   try {
-    const { id, ...produtoSemId } = produto; // Remove o campo "id", se existir
-    const { data } = await axios.post(API_URL, produtoSemId, {
+    if (!produto.nome || typeof produto.preco !== "number" || produto.preco < 0) {
+      throw new Error("Dados inválidos: nome é obrigatório e preço deve ser um número não-negativo.");
+    }
+
+    const produtoPronto = limparProduto(produto);
+    const { data } = await axios.post(API_URL, produtoPronto, {
       headers: { "Content-Type": "application/json" }
     });
+
     return data;
   } catch (error) {
     console.error("Erro ao criar produto:", error);
-    console.log("Detalhes do erro:", error.response?.data);
+    console.log("Produto enviado:", produto);
+    console.log("Resposta do servidor:", error.response?.data);
     throw error;
   }
 };
 
-// Atualiza um produto existente por ID
+// Atualiza um produto por ID
 const atualizar = async (id, produto) => {
   try {
-    const { data } = await axios.put(`${API_URL}/${id}`, produto, {
+    if (!produto.nome || typeof produto.preco !== "number" || produto.preco < 0) {
+      throw new Error("Dados inválidos: nome é obrigatório e preço deve ser um número não-negativo.");
+    }
+
+    const produtoPronto = limparProduto(produto);
+    const { data } = await axios.put(`${API_URL}/${id}`, produtoPronto, {
       headers: { "Content-Type": "application/json" }
     });
+
     return data;
   } catch (error) {
-    console.error(`Erro ao atualizar o produto com ID ${id}:`, error);
+    console.error(`Erro ao atualizar produto com ID ${id}:`, error);
+    console.log("Produto enviado:", produto);
+    console.log("Resposta do servidor:", error.response?.data);
     throw error;
   }
 };
