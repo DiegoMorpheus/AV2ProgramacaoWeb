@@ -1,31 +1,32 @@
 export default async function handler(req, res) {
   try {
-    const url = new URL(req.url, `http://${req.headers.host}`);
-    const path = url.pathname.replace(/^\/api\/produtos/, "").replace(/^\/+/, "");
-    const query = url.search;
+    // Monta o path final com segurança
+    const fullPath = req.url.replace(/^\/api\/produtos/, "").replace(/^\/+/, "");
+    const queryIndex = fullPath.indexOf("?");
+    const path = queryIndex >= 0 ? fullPath.slice(0, queryIndex) : fullPath;
+    const query = queryIndex >= 0 ? fullPath.slice(queryIndex) : "";
+
     const targetUrl = `http://leoproti.com.br:8004/produtos${path ? `/${path}` : ""}${query}`;
+    console.log("🔗 Proxy para:", targetUrl);
 
-    console.log("🔗 Target:", targetUrl);
-
-    // Use headers explícitos (sem herdar todos os do req)
-    const headers = {
-      "Content-Type": "application/json",
-    };
-
-    // Ler corpo da requisição apenas se necessário
+    // Define headers apenas quando necessário
+    const headers = {};
     let body = null;
+
     if (!["GET", "HEAD"].includes(req.method)) {
+      headers["Content-Type"] = "application/json";
+
       try {
-        const json = await req.json(); // <-- aqui pode falhar silenciosamente
+        const json = await req.json();
         body = JSON.stringify(json);
-        console.log("📦 Corpo JSON:", body);
+        console.log("📦 Enviando corpo JSON:", body);
       } catch (err) {
-        console.error("❌ Falha ao ler o body:", err.message);
+        console.error("❌ Erro ao ler body:", err.message);
         return res.status(400).json({ erro: "Formato do corpo inválido." });
       }
     }
 
-    // Faz o repasse para o backend
+    // Encaminha requisição para o backend real
     const response = await fetch(targetUrl, {
       method: req.method,
       headers,
