@@ -1,34 +1,31 @@
 export default async function handler(req, res) {
   try {
-    // Monta a URL final com segurança
     const url = new URL(req.url, `http://${req.headers.host}`);
     const path = url.pathname.replace(/^\/api\/produtos/, "").replace(/^\/+/, "");
     const query = url.search;
     const targetUrl = `http://leoproti.com.br:8004/produtos${path ? `/${path}` : ""}${query}`;
 
-    console.log("Método:", req.method);
-    console.log("Path:", path);
-    console.log("Destino final:", targetUrl);
+    console.log("🔗 Target:", targetUrl);
 
-    // Define headers fixos para evitar conflitos
+    // Use headers explícitos (sem herdar todos os do req)
     const headers = {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     };
 
-    // Prepara o corpo da requisição, se necessário
+    // Ler corpo da requisição apenas se necessário
     let body = null;
     if (!["GET", "HEAD"].includes(req.method)) {
       try {
-        const json = await req.json();
+        const json = await req.json(); // <-- aqui pode falhar silenciosamente
         body = JSON.stringify(json);
-        console.log(" Corpo da requisição:", body);
+        console.log("📦 Corpo JSON:", body);
       } catch (err) {
-        console.error(" Erro ao analisar o body:", err);
+        console.error("❌ Falha ao ler o body:", err.message);
         return res.status(400).json({ erro: "Formato do corpo inválido." });
       }
     }
 
-    // Encaminha a requisição para o servidor
+    // Faz o repasse para o backend
     const response = await fetch(targetUrl, {
       method: req.method,
       headers,
@@ -47,10 +44,7 @@ export default async function handler(req, res) {
     }
 
   } catch (err) {
-    console.error(" Erro no proxy:", err);
-    res.status(500).json({
-      error: "Erro no proxy",
-      detalhe: err.message,
-    });
+    console.error("🔥 Erro no proxy:", err.message);
+    res.status(500).json({ erro: "Erro no proxy", detalhe: err.message });
   }
 }
