@@ -13,7 +13,7 @@ const listar = async () => {
   }
 };
 
-// Obtém um produto por ID (para visualização ou edição)
+// Obtém um produto por ID
 const obter = async (id) => {
   try {
     const { data } = await axios.get(`${API_URL}/${id}`);
@@ -24,12 +24,12 @@ const obter = async (id) => {
   }
 };
 
-// Cria um novo produto, sem enviar o campo ID
+// Cria um novo produto (sem enviar o ID)
 const criar = async (produto) => {
   try {
-    const { id, ...produtoSemId } = produto; // Remove o ID, se existir
+    const { id, ...produtoSemId } = produto; // Remove o campo "id", se existir
     const { data } = await axios.post(API_URL, produtoSemId, {
-      headers: { 'Content-Type': 'application/json' }
+      headers: { "Content-Type": "application/json" }
     });
     return data;
   } catch (error) {
@@ -43,7 +43,7 @@ const criar = async (produto) => {
 const atualizar = async (id, produto) => {
   try {
     const { data } = await axios.put(`${API_URL}/${id}`, produto, {
-      headers: { 'Content-Type': 'application/json' }
+      headers: { "Content-Type": "application/json" }
     });
     return data;
   } catch (error) {
@@ -62,7 +62,6 @@ const excluir = async (id) => {
   }
 };
 
-// Exporta todas as funções para uso no app
 export default {
   listar,
   obter,
